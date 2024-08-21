@@ -2,7 +2,7 @@ FROM maven:3.9.7-amazoncorretto-17 AS build
 
 WORKDIR /app
 
-COPY source/ .
+COPY . .
 
 RUN ./mvnw package -DskipTests -Dspring-boot.run.profiles=postgres
 
