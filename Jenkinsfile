@@ -27,9 +27,9 @@ pipeline {
         stage('Building Image') {
             steps {
                 echo 'Building Image..'
+                buildDockerImage("mahmoudk1000/petclinic:${env.COMMIT_SHA}")
                 dockerLogin()
-                buildDockerImage("mahmoudk1000/petclinic:${COMMIT_SHA}")
-                dockerPushImage("mahmoudk1000/petclinic:${COMMIT_SHA}")
+                dockerPushImage("mahmoudk1000/petclinic:${env.COMMIT_SHA}")
             }
         }
         stage('Deploy') {
