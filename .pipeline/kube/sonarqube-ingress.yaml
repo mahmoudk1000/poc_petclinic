@@ -3,18 +3,18 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: nexus-ingress
-  namespace: nexus
+  name: sonarqube-ingress
+  namespace: sonarqube
 spec:
   ingressClassName: webapprouting.kubernetes.azure.com
   rules:
-    - host: nexus.labbi.online
+    - host: sonar.labbi.lab
       http:
         paths:
           - backend:
               service:
-                name: nexus-nexus-repository-manager
+                name: sonarqube-sonarqube
                 port:
-                  number: 8081
+                  number: 9000
             path: /
             pathType: Prefix

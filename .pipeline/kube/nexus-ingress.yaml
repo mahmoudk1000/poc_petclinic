@@ -3,18 +3,18 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: jenkins-ingress
-  namespace: jenkins
+  name: nexus-ingress
+  namespace: nexus
 spec:
   ingressClassName: webapprouting.kubernetes.azure.com
   rules:
-    - host: jenkins.labbi.online
+    - host: nexus.labbi.lab
       http:
         paths:
           - backend:
               service:
-                name: jenkins
+                name: nexus-nexus-repository-manager
                 port:
-                  number: 8080
+                  number: 8081
             path: /
             pathType: Prefix

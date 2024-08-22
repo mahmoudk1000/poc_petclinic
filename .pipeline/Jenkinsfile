@@ -12,16 +12,16 @@ pipeline {
     stages {
         stage('SonarQube Analysis') {
             steps {
-                echo 'Running SCA...'
                 withSonarQubeEnv(installationName: 'SonarQubeServer', credentialsId: 'SonarQubeToken') {
-                    sh "./mvnw clean verify sonar:sonar -Dsonar.projectKey=petclinic -Dsonar.projectName='petclinic'"
+                    sh label: "Running SCA Test",
+                        script: "./mvnw clean verify sonar:sonar -Dsonar.projectKey=petclinic -Dsonar.projectName='petclinic'"
                 }
             }
         }
         stage('Build Artifact') {
             steps {
-                echo 'Building..'
-                    sh "./mvnw package -DskipTests"
+                sh label: "Building Artifact",
+                    script: "./mvnw package -DskipTests"
             }
         }
         stage('Building Image') {
