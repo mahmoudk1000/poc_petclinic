@@ -3,29 +3,12 @@
 RESOURCE_GROUP="petclinic"
 CLUSTER_NAME="petclinic-cluster-aks"
 
-# Function to deploy an NGINX ingress controller
-deploy_nginx_ingress() {
-        local NAME=$1
-
-        # Add the ingress-nginx Helm repo if not already added
-        helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
-        helm repo update
-
-        # Deploy the NGINX ingress controller using Helm
-        helm install "${NAME}-nginx" ingress-nginx/ingress-nginx \
-                --namespace "$NAME" \
-                --set controller.replicaCount=1 \
-                --set controller.service.externalTrafficPolicy=Local \
-                --set controller.service.annotations."service\.beta\.kubernetes\.io/azure-load-balancer-resource-group"=$RESOURCE_GROUP
-}
-
 # Function to install Jenkins using Helm
 install_jenkins() {
         kubectl create namespace jenkins
         helm repo add jenkins https://charts.jenkins.io
         helm repo update
-        helm install jenkins jenkins/jenkins --namespace jenkins # \
-                # --set controller.jenkinsUriPrefix=/jenkins
+        helm install jenkins jenkins/jenkins --namespace jenkins
 
         echo "Jenkins is installed"
         printf '%s' "$(kubectl get secret --namespace jenkins jenkins -o jsonpath="{.data.jenkins-admin-password}" | base64 --decode)"
@@ -46,7 +29,12 @@ install_nexus() {
         kubectl create namespace nexus
         helm repo add sonatype https://sonatype.github.io/helm3-charts/
         helm repo update
-        helm install nexus sonatype/nexus-repository-manager --namespace nexus
+
+        kubectl label namespace nexus app.kubernetes.io/managed-by=Helm
+        kubectl annotate namespace nexus meta.helm.sh/release-name=nxrm
+        kubectl annotate namespace nexus meta.helm.sh/release-namespace=default
+
+        helm install nxrm sonatype/nxrm-ha --set namespaces.nexusNs.name=nexus
 
         echo "Nexus is installed"
 }
