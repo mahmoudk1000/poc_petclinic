@@ -1,11 +1,16 @@
-@Library('jenkins-shared-library@stable')_
+library "jenkins-shared-library@stable"
 
 pipeline {
     agent {
-        label 'linux'
+        kubernetes {
+            inheritFrom 'default'
+            yamlFile '.pipeline/podtemplate.yaml'
+            defaultContainer 'jnlp'
+        }
     }
 
     environment {
+        IMAGE_NAME = "petclinic"
         COMMIT_SHA = sh(script: 'git rev-parse --short HEAD', returnStdout: true).trim()
     }
 
@@ -20,19 +25,40 @@ pipeline {
         }
         stage('Build Artifact') {
             steps {
-                sh label: "Building Artifact",
-                    script: "./mvnw package -DskipTests"
+                container('maven') {
+                    script {
+                        sh label: "Building Artifact",
+                            script: "./mvnw package -DskipTests"
+                    }
+                }
             }
         }
-        stage('Building Image') {
+        stage('Building Image Using Kaniko') {
             steps {
-                echo 'Building Image..'
-                buildDockerImage("mahmoudk1000/petclinic:${env.COMMIT_SHA}")
-                dockerLogin()
-                dockerPushImage("mahmoudk1000/petclinic:${env.COMMIT_SHA}")
+                container (name: 'kaniko', shell: '/busybox/sh') {
+                    script {
+                        kanikoBuildPush(imageName: "${IMAGE_NAME}", tag: "${COMMIT_SHA}")
+                    }
+                }
             }
         }
-        stage('Deploy') {
+        stage('Deploy Production') {
+            when {
+                anyOf {
+                    branch 'main'
+                    branch 'master'
+                }
+            }
+            steps {
+                echo 'Deploying soon IsA.'
+            }
+        }
+        stage('Deploy Staging') {
+            when {
+                anyOf {
+                    branch 'dev'
+                }
+            }
             steps {
                 echo 'Deploying soon IsA.'
             }
