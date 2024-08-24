@@ -13,7 +13,7 @@ variable "agent_count" {
 variable "agents_max_count" {
   description = "Max Node Count"
   type        = number
-  default     = 5
+  default     = 3
 }
 
 variable "agents_min_count" {

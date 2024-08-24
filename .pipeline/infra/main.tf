@@ -8,7 +8,9 @@ locals {
 
 resource "azurerm_resource_group" "main" {
   name     = local.name
-  location = "East US 2"
+  location = "West Europe"
+
+  tags = local.tags
 }
 
 module "network" {
