@@ -1,5 +1,7 @@
 library "jenkins-shared-library@stable"
 
+def imageName = 'mahmoudk1000/petclinic'
+
 pipeline {
     agent {
         kubernetes {
@@ -7,11 +9,6 @@ pipeline {
             yamlFile '.pipeline/podtemplate.yaml'
             defaultContainer 'jnlp'
         }
-    }
-
-    environment {
-        IMAGE_NAME = "petclinic"
-        COMMIT_SHA = sh(script: 'git rev-parse --short HEAD', returnStdout: true).trim()
     }
 
     stages {
@@ -29,6 +26,7 @@ pipeline {
             steps {
                 container('maven') {
                     script {
+                        def tag = sh(script: './mvn help:evaluate -Dexpression=project.version -q -DforceStdout', returnStdout: true).trim()
                         sh label: "Building Artifact",
                             script: "./mvnw package -DskipTests"
                     }
@@ -39,7 +37,7 @@ pipeline {
             steps {
                 container (name: 'kaniko', shell: '/busybox/sh') {
                     script {
-                        kanikoBuildPush(imageName: "${env.IMAGE_NAME}", tag: "${env.COMMIT_SHA}")
+                        kanikoBuildPush(imageName, tag)
                     }
                 }
             }
