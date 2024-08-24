@@ -6,9 +6,7 @@ metadata:
   labels:
     {{- include "petclinic.labels" . | nindent 4 }}
 spec:
-  {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
-  {{- end }}
   selector:
     matchLabels:
       {{- include "petclinic.selectorLabels" . | nindent 6 }}
@@ -37,6 +35,15 @@ spec:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: "postgres"
+            - name: POSTGRES_URL
+              value: {{ printf "jdbc:postgresql://postgre:5432/%s" .Values.postgresql.database | quote }}
+            - name: POSTGRES_USER
+              value: {{ .Values.postgresql.auth.username | quote }}
+            - name: POSTGRES_PASS
+              value: {{ .Values.postgresql.auth.password | quote }}
           ports:
             - name: http
               containerPort: {{ .Values.service.port }}
