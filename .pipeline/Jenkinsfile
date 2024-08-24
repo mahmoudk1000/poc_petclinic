@@ -26,7 +26,7 @@ pipeline {
             steps {
                 container('maven') {
                     script {
-                        def tag = sh(script: './mvn help:evaluate -Dexpression=project.version -q -DforceStdout', returnStdout: true).trim()
+                        def tag = sh(script: './mvnw help:evaluate -Dexpression=project.version -q -DforceStdout', returnStdout: true).trim()
                         sh label: "Building Artifact",
                             script: "./mvnw package -DskipTests"
                     }
