@@ -54,7 +54,7 @@ pipeline {
                         sh label: "Deploying to Development",
                             script: '''
                                 helm dependency update .
-                                helm install petclinic . -f dev-values.yaml --set image.tag=${pomVersion} -n petclinic-dev
+                                helm upgrade --install petclinic . -f dev-values.yaml --set image.tag=${pomVersion} -n petclinic-dev
                             '''
                     }
                 }
@@ -70,7 +70,7 @@ pipeline {
                         sh label: "Deploying to Development",
                             script: '''
                                 helm dependency update .
-                                helm install petclinic . -f tst-values.yaml --set image.tag=${pomVersion} -n petclinic-tst
+                                helm upgrade --install petclinic . -f tst-values.yaml --set image.tag=${pomVersion} -n petclinic-tst
                             '''
                     }
                 }
@@ -86,7 +86,7 @@ pipeline {
                         sh label: "Deploying to Development",
                             script: '''
                                 helm dependency update .
-                                helm install petclinic . -f prd-values.yaml --set image.tag=${pomVersion} -n petclinic-prd
+                                helm upgrade --install petclinic . -f prd-values.yaml --set image.tag=${pomVersion} -n petclinic-prd
                             '''
                     }
                 }
