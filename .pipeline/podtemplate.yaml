@@ -11,14 +11,18 @@ spec:
       command: [sleep]
       args: [infinity]
       volumeMounts:
-        - name: jenkins-docker-cfg
+        - name: docker-cfg
           mountPath: /kaniko/.docker
     - name: maven
       image: maven:3.9.7-amazoncorretto-17
       command: [sleep]
       args: [infinity]
+    - name: helm
+      image: alpine/helm:latest
+      command: [sleep]
+      args: [infinity]
   volumes:
-    - name: jenkins-docker-cfg
+    - name: docker-cfg
       projected:
         sources:
           - secret:

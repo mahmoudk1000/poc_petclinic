@@ -1,7 +1,7 @@
 library "jenkins-shared-library@stable"
 
 def imageName = 'petclinic'
-def regDest = 'nexus-nexus-repository-manager.nexus.svc.cluster.local:8080/docker/'
+def regDest = 'mahmoudk1000' // 'nexus-nexus-repository-manager.nexus.svc.cluster.local:8081/docker'
 def pomVersion = 'latest'
 
 pipeline {
@@ -49,7 +49,15 @@ pipeline {
                 branch 'dev'
             }
             steps {
-                echo 'Deploying (Devleopment) soon IsA.'
+                container('helm') {
+                    dir('.pipeline/helm') {
+                        sh label: "Deploying to Development",
+                            script: '''
+                                helm dependency update .
+                                helm install petclinic . -f dev-values.yaml --set image.tag=${pomVersion} -n petclinic-dev
+                            '''
+                    }
+                }
             }
         }
         stage('Deploy Stage') {
@@ -57,7 +65,15 @@ pipeline {
                 branch 'release'
             }
             steps {
-                echo 'Deploying (Testing) soon IsA.'
+                container('helm') {
+                    dir('.pipeline/helm') {
+                        sh label: "Deploying to Development",
+                            script: '''
+                                helm dependency update .
+                                helm install petclinic . -f tst-values.yaml --set image.tag=${pomVersion} -n petclinic-tst
+                            '''
+                    }
+                }
             }
         }
         stage('Deploy Production') {
@@ -65,7 +81,15 @@ pipeline {
                 branch 'main'
             }
             steps {
-                echo 'Deploying (Production) soon IsA.'
+                container('helm') {
+                    dir('.pipeline/helm') {
+                        sh label: "Deploying to Development",
+                            script: '''
+                                helm dependency update .
+                                helm install petclinic . -f prd-values.yaml --set image.tag=${pomVersion} -n petclinic-prd
+                            '''
+                    }
+                }
             }
         }
     }
