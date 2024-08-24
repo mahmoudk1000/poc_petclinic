@@ -1,6 +1,6 @@
 library "jenkins-shared-library@stable"
 
-def imageName = 'mahmoudk1000/petclinic'
+def imageName = 'nexus.labbi.lab/petclinic'
 def pomVersion = 'latest'
 
 pipeline {
@@ -43,31 +43,28 @@ pipeline {
                 }
             }
         }
-        stage('Choose Environment for Main Branch') {
-            when {
-                branch 'main'
-            }
-            steps {
-                script {
-                    def userInput = input(
-                        id: 'userInput', message: 'Choose the environment to deploy to:', parameters: [
-                            choice(name: 'ENVIRONMENT', choices: ['Production', 'Staging'], description: 'Select the environment')
-                        ]
-                    )
-                    if (userInput == 'Production') {
-                        echo 'Deploying to Production environment.'
-                    } else if (userInput == 'Staging') {
-                        echo 'Deploying to Staging environment.'
-                    }
-                }
-            }
-        }
         stage('Deploy Devleopment') {
             when {
                 branch 'dev'
             }
             steps {
-                echo 'Deploying soon IsA.'
+                echo 'Deploying (Devleopment) soon IsA.'
+            }
+        }
+        stage('Deploy Stage') {
+            when {
+                branch 'release'
+            }
+            steps {
+                echo 'Deploying (Testing) soon IsA.'
+            }
+        }
+        stage('Deploy Production') {
+            when {
+                branch 'main'
+            }
+            steps {
+                echo 'Deploying (Production) soon IsA.'
             }
         }
     }
