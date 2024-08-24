@@ -39,6 +39,15 @@ install_nexus() {
         echo "Nexus is installed"
 }
 
+install_old_nexus() {
+        kubectl create namespace nexus
+        helm repo add sonatype https://sonatype.github.io/helm3-charts/
+        helm repo update
+        helm install nexus sonatype/nexus-repository-manager --namespace nexus
+
+        echo "Nexus is installed"
+}
+
 # Function to enable approuting
 enable_approuting() {
         az aks approuting enable --resource-group $RESOURCE_GROUP --name $CLUSTER_NAME
@@ -57,7 +66,7 @@ sonar)
         install_sonarqube
         ;;
 nexus)
-        install_nexus
+        install_old_nexus
         ;;
 approuting)
         enable_approuting

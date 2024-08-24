@@ -13,7 +13,7 @@ spec:
         paths:
           - backend:
               service:
-                name: nxrm-nxrm-ha-hl
+                name: nexus-nexus-repository-manager # nxrm-nxrm-ha-hl
                 port:
                   number: 8081
             path: /
