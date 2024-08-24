@@ -1,6 +1,7 @@
 library "jenkins-shared-library@stable"
 
-def imageName = 'nexus.labbi.lab/petclinic'
+def imageName = 'petclinic'
+def regDest = 'nexus-nexus-repository-manager.nexus.svc.cluster.local:8080/docker/'
 def pomVersion = 'latest'
 
 pipeline {
@@ -38,7 +39,7 @@ pipeline {
             steps {
                 container (name: 'kaniko', shell: '/busybox/sh') {
                     script {
-                        kanikoBuildPush(imageName, pomVersion)
+                        kanikoBuildPush(regDest, imageName, pomVersion)
                     }
                 }
             }
