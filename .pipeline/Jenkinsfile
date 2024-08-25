@@ -44,18 +44,16 @@ pipeline {
                 }
             }
         }
-        stage('Deploy Devleopment') {
+        stage('Deploy Development') {
             when {
                 branch 'dev'
             }
             steps {
                 container('helm') {
                     dir('.pipeline/helm') {
-                        sh label: "Deploying to Development",
-                            script: '''
-                                helm dependency update .
-                                helm upgrade --install ${appName} . -f dev-values.yaml --set image.tag=${pomVersion} -n ${appName}-dev
-                            '''
+                        script {
+                            helmInstall(appName, "dev-values", pomVersion, "${appName}-dev")
+                        }
                     }
                 }
             }
@@ -67,11 +65,9 @@ pipeline {
             steps {
                 container('helm') {
                     dir('.pipeline/helm') {
-                        sh label: "Deploying to Development",
-                            script: '''
-                                helm dependency update .
-                                helm upgrade --install ${appName} . -f tst-values.yaml --set image.tag=${pomVersion} -n ${appName}-tst
-                            '''
+                        script {
+                            helmInstall(appName, "stg-values", pomVersion, "${appName}-stg")
+                        }
                     }
                 }
             }
@@ -83,11 +79,9 @@ pipeline {
             steps {
                 container('helm') {
                     dir('.pipeline/helm') {
-                        sh label: "Deploying to Development",
-                            script: '''
-                                helm dependency update .
-                                helm upgrade --install ${appName} . -f prd-values.yaml --set image.tag=${pomVersion} -n ${appName}-prd
-                            '''
+                        script {
+                            helmInstall(appName, "prd-values", pomVersion, "${appName}-prd")
+                        }
                     }
                 }
             }
