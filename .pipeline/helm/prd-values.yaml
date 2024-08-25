@@ -9,7 +9,7 @@ image:
   # Overrides the image tag whose default is the chart appVersion.
   tag: ''
 imagePullSecrets:
-  name: docker-credentials
+  name: regcred
 nameOverride: ''
 fullnameOverride: ''
 serviceAccount:
