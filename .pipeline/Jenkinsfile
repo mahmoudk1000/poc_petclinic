@@ -1,7 +1,7 @@
 library "jenkins-shared-library@stable"
 
 def appName = 'petclinic'
-def regDest = 'mahmoudk1000' // 'nexus-nexus-repository-manager.nexus.svc.cluster.local:8081/docker'
+def regDest = 'nexus-nexus-repository-manager-docker-5000.nexus.svc.cluster.local:5000'
 def pomVersion = 'latest'
 
 pipeline {
