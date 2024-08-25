@@ -3,10 +3,9 @@ apiVersion: v2
 name: petclinic
 description: A Helm chart for Petclinic
 type: application
-keywords:
-  - petclinic
+keywords: [petclinic]
 version: 0.1.0
-appVersion: 3.3.0
+appVersion: 3.3.0-SNAPSHOT
 dependencies:
   - name: postgresql
     version: 15.5.24

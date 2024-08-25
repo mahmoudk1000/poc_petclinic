@@ -1,6 +1,6 @@
 library "jenkins-shared-library@stable"
 
-def imageName = 'petclinic'
+def appName = 'petclinic'
 def regDest = 'mahmoudk1000' // 'nexus-nexus-repository-manager.nexus.svc.cluster.local:8081/docker'
 def pomVersion = 'latest'
 
@@ -39,7 +39,7 @@ pipeline {
             steps {
                 container (name: 'kaniko', shell: '/busybox/sh') {
                     script {
-                        kanikoBuildPush(regDest, imageName, pomVersion)
+                        kanikoBuildPush(regDest, appName, pomVersion)
                     }
                 }
             }
@@ -54,7 +54,7 @@ pipeline {
                         sh label: "Deploying to Development",
                             script: '''
                                 helm dependency update .
-                                helm upgrade --install petclinic . -f dev-values.yaml --set image.tag=${pomVersion} -n petclinic-dev
+                                helm upgrade --install ${appName} . -f dev-values.yaml --set image.tag=${pomVersion} -n ${appName}-dev
                             '''
                     }
                 }
@@ -70,7 +70,7 @@ pipeline {
                         sh label: "Deploying to Development",
                             script: '''
                                 helm dependency update .
-                                helm upgrade --install petclinic . -f tst-values.yaml --set image.tag=${pomVersion} -n petclinic-tst
+                                helm upgrade --install ${appName} . -f tst-values.yaml --set image.tag=${pomVersion} -n ${appName}-tst
                             '''
                     }
                 }
@@ -86,7 +86,7 @@ pipeline {
                         sh label: "Deploying to Development",
                             script: '''
                                 helm dependency update .
-                                helm upgrade --install petclinic . -f prd-values.yaml --set image.tag=${pomVersion} -n petclinic-prd
+                                helm upgrade --install ${appName} . -f prd-values.yaml --set image.tag=${pomVersion} -n ${appName}-prd
                             '''
                     }
                 }
