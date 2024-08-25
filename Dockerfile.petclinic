@@ -2,8 +2,8 @@ FROM amazoncorretto:17
 
 WORKDIR /app
 
-COPY `pwd`/target/*.jar /app/app.jar
+COPY target/*.jar petclinic.jar
 
 EXPOSE 8080
 
-CMD [ "java", "-jar", "/app/app.jar" ]
+CMD [ "java", "-jar", "petclinic.jar" ]
