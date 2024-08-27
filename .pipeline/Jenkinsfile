@@ -21,9 +21,6 @@ pipeline {
                         sh label: "Running SCA Test",
                             script: "./mvnw clean verify sonar:sonar -Dsonar.projectKey=petclinic -Dsonar.projectName='petclinic'"
                     }
-                    script {
-                        gitSha = sh(script: 'git rev-parse --short HEAD', returnStdout: true).trim()
-                    }
                 }
             }
         }
@@ -55,7 +52,7 @@ pipeline {
                 container('helm') {
                     dir('.pipeline/helm') {
                         script {
-                            helmInstall(appName, "dev-values", "${pomVersion}_${gitSha}", "${appName}-dev")
+                            helmInstall(appName, "dev-values", pomVersion, "${appName}-dev")
                         }
                     }
                 }
@@ -69,7 +66,7 @@ pipeline {
                 container('helm') {
                     dir('.pipeline/helm') {
                         script {
-                            helmInstall(appName, "stg-values", "${pomVersion}_${gitSha}", "${appName}-stg")
+                            helmInstall(appName, "stg-values", pomVersion, "${appName}-stg")
                         }
                     }
                 }
@@ -83,7 +80,7 @@ pipeline {
                 container('helm') {
                     dir('.pipeline/helm') {
                         script {
-                            helmInstall(appName, "prd-values", "${pomVersion}_${gitSha}", "${appName}-prd")
+                            helmInstall(appName, "prd-values", pomVersion, "${appName}-prd")
                         }
                     }
                 }
