@@ -21,7 +21,9 @@ pipeline {
                     sh label: "Running SCA Test",
                         script: "./mvnw clean verify sonar:sonar -Dsonar.projectKey=petclinic -Dsonar.projectName='petclinic'"
                 }
-                gitSha = sh(script: 'git rev-parse --short HEAD', returnStdout: true).trim()
+                script {
+                    gitSha = sh(script: 'git rev-parse --short HEAD', returnStdout: true).trim()
+                }
             }
         }
         stage('Build Artifact') {
