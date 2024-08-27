@@ -3,6 +3,7 @@ library "jenkins-shared-library@stable"
 def appName = 'petclinic'
 def regDest = 'nexus-nexus-repository-manager-docker-5000.nexus.svc.cluster.local:5000'
 def pomVersion = 'latest'
+def gitSha = 'head'
 
 pipeline {
     agent {
@@ -16,12 +17,11 @@ pipeline {
     stages {
         stage('SonarQube Analysis') {
             steps {
-                container('maven') {
-                    withSonarQubeEnv(installationName: 'SonarQubeServer', credentialsId: 'SonarQubeToken') {
-                        sh label: "Running SCA Test",
-                            script: "./mvnw clean verify sonar:sonar -Dsonar.projectKey=petclinic -Dsonar.projectName='petclinic'"
-                    }
+                withSonarQubeEnv(installationName: 'SonarQubeServer', credentialsId: 'SonarQubeToken') {
+                    sh label: "Running SCA Test",
+                        script: "./mvnw clean verify sonar:sonar -Dsonar.projectKey=petclinic -Dsonar.projectName='petclinic'"
                 }
+                gitSha = sh(script: 'git rev-parse --short HEAD', returnStdout: true).trim()
             }
         }
         stage('Build Artifact') {
@@ -52,7 +52,7 @@ pipeline {
                 container('helm') {
                     dir('.pipeline/helm') {
                         script {
-                            helmInstall(appName, "dev-values", pomVersion, "${appName}-dev")
+                            helmInstall(appName, "dev-values", "${pomVersion}_${gitSha}", "${appName}-dev")
                         }
                     }
                 }
@@ -66,7 +66,7 @@ pipeline {
                 container('helm') {
                     dir('.pipeline/helm') {
                         script {
-                            helmInstall(appName, "stg-values", pomVersion, "${appName}-stg")
+                            helmInstall(appName, "stg-values", "${pomVersion}_${gitSha}", "${appName}-stg")
                         }
                     }
                 }
@@ -80,7 +80,7 @@ pipeline {
                 container('helm') {
                     dir('.pipeline/helm') {
                         script {
-                            helmInstall(appName, "prd-values", pomVersion, "${appName}-prd")
+                            helmInstall(appName, "prd-values", "${pomVersion}_${gitSha}", "${appName}-prd")
                         }
                     }
                 }
