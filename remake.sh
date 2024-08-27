@@ -34,16 +34,25 @@ install_nexus() {
         kubectl annotate namespace nexus meta.helm.sh/release-name=nxrm
         kubectl annotate namespace nexus meta.helm.sh/release-namespace=default
 
-        helm install nxrm sonatype/nxrm-ha --set namespaces.nexusNs.name=nexus
-
-        echo "Nexus is installed"
-}
-
-install_old_nexus() {
-        kubectl create namespace nexus
-        helm repo add sonatype https://sonatype.github.io/helm3-charts/
-        helm repo update
-        helm install nexus sonatype/nexus-repository-manager --namespace nexus
+        helm install nexus -n nexus .pipeline/nexus/ -f .pipeline/nexus/values.yaml \
+                --set namespaces.nexusNs.enabled=false \
+                --set namespaces.nexusNs.name=nexus \
+                --set statefulset.replicaCount=1 \
+                --set statefulset.container.resources.requests.cpu=1 \
+                --set statefulset.container.resources.requests.memory=1Gi \
+                --set statefulset.container.resources.limits.cpu=1 \
+                --set statefulset.container.resources.limits.memory=1Gi \
+                --set service.nexus.enabled=true \
+                --set service.nexus.type=ClusterIP \
+                --set ingress.enabled=true \
+                --set ingress.tls=false \
+                --set ingress.hostRepo=nexus.labbi.lab \
+                --set ingress.defaultRule=true \
+                --set ingress.ingressClassName=webapprouting.kubernetes.azure.com \
+                --set nexus.docker.enabled=true \
+                --set nexus.docker.registries[0].ingressClassName=webapprouting.kubernetes.azure.com \
+                --set nexus.docker.registries[0].host=docker.nexus.labbi.lab \
+                --set nexus.docker.registries[0].port=5000
 
         echo "Nexus is installed"
 }
@@ -66,7 +75,7 @@ sonar)
         install_sonarqube
         ;;
 nexus)
-        install_old_nexus
+        install_nexus
         ;;
 approuting)
         enable_approuting
