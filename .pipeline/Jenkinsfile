@@ -8,7 +8,7 @@ pipeline {
     agent {
         kubernetes {
             inheritFrom 'default'
-            yamlFile '.pipeline/podtemplate.yaml'
+            yamlFile '.pipeline/agents.yaml'
             defaultContainer 'jnlp'
         }
     }
@@ -52,7 +52,7 @@ pipeline {
                 container('helm') {
                     dir('.pipeline/helm') {
                         script {
-                            helmInstall(appName, "dev-values", pomVersion, "${appName}-dev")
+                            helmInstall(appName, "dev-values", "${pomVersion}_${GIT_COMMIT}", "${appName}-dev")
                         }
                     }
                 }
@@ -66,7 +66,7 @@ pipeline {
                 container('helm') {
                     dir('.pipeline/helm') {
                         script {
-                            helmInstall(appName, "stg-values", pomVersion, "${appName}-stg")
+                            helmInstall(appName, "stg-values", "${pomVersion}_${GIT_COMMIT}", "${appName}-stg")
                         }
                     }
                 }
@@ -80,7 +80,7 @@ pipeline {
                 container('helm') {
                     dir('.pipeline/helm') {
                         script {
-                            helmInstall(appName, "prd-values", pomVersion, "${appName}-prd")
+                            helmInstall(appName, "prd-values", "${pomVersion}_${GIT_COMMIT}", "${appName}-prd")
                         }
                     }
                 }
