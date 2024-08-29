@@ -5,12 +5,12 @@ metadata:
   name: coredns-custom
   namespace: kube-system
 data:
-  test.override: |-
-    registry.labbi.lab:53 {
-      forward registry.labbi.lab 4.175.52.131
-    }
-  # hosts.override: |-
-  #   hosts {
-  #     4.175.52.131 registry.labbi.lab
-  #     fallthrough
+  # test.override: |-
+  #   registry.labbi.lab:53 {
+  #     forward registry.labbi.lab 4.175.52.131
   #   }
+  test.override: |-
+    hosts {
+      4.175.52.131 registry.labbi.lab
+      fallthrough
+    }
