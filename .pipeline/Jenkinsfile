@@ -66,7 +66,7 @@ pipeline {
                 container('helm') {
                     dir('.pipeline/helm') {
                         script {
-                            helmInstall(appName, "stg-values", pomVersion, "${appName}-stg")
+                            helmInstall(appName, "tst-values", pomVersion, "${appName}-tst")
                         }
                     }
                 }
