@@ -1,0 +1,173 @@
+---
+statefulset:
+  # This is not supported
+  enabled: false
+deploymentStrategy: Recreate
+image:
+  # Sonatype Official Public Image
+  repository: sonatype/nexus3
+  tag: 3.64.0
+  pullPolicy: IfNotPresent
+imagePullSecrets:
+  - name: regcred
+nexus:
+  docker:
+    enabled: true
+    ingress:
+      # annotations:
+      #   nginx.ingress.kubernetes.io/force-ssl-redirect: 'true'
+      #   nginx.ingress.kubernetes.io/ssl-redirect: 'true'
+    registries:
+      - host: registry.labbi.lab
+        port: 5000
+        secretName: nexus-tls
+  env:
+    - name: INSTALL4J_ADD_VM_PARAMS
+      value: |-
+        -Xms2703M -Xmx2703M
+        -XX:MaxDirectMemorySize=2703M
+        -XX:+UnlockExperimentalVMOptions
+        -XX:+UseCGroupMemoryLimitForHeap
+        -Djava.util.prefs.userRoot=/nexus-data/javaprefs
+    - name: NEXUS_SECURITY_RANDOMPASSWORD
+      value: 'true'
+  properties:
+    override: true
+    data:
+      nexus.scripts.allowCreation: true
+      # application-port-ssl: 8443
+      # ssl.etc: /nexus-data/etc/ssl
+  # nodeSelector:
+  #   cloud.google.com/gke-nodepool: default-pool
+  resources:
+    requests:
+      cpu: 250m
+      memory: 1000Mi
+    limits:
+      cpu: 1
+      memory: 2Gi
+
+  # The ports should only be changed if the nexus image uses a different port
+  nexusPort: 8081
+
+  # Default the pods UID and GID to match the nexus3 container.
+  # Customize or remove these values from the securityContext as appropriate for
+  # your deployment environment.
+  securityContext:
+    runAsUser: 200
+    runAsGroup: 200
+    fsGroup: 200
+  podAnnotations: {}
+  livenessProbe:
+    initialDelaySeconds: 30
+    periodSeconds: 30
+    failureThreshold: 6
+    timeoutSeconds: 10
+    path: /
+  readinessProbe:
+    initialDelaySeconds: 30
+    periodSeconds: 30
+    failureThreshold: 6
+    timeoutSeconds: 10
+    path: /
+  # hostAliases allows the modification of the hosts file inside a container
+  hostAliases: []
+  # - ip: "192.168.1.10"
+  #   hostnames:
+  #   - "example.com"
+  #   - "www.example.com"
+nameOverride: ''
+fullnameOverride: ''
+deployment:
+  #  # Add annotations in deployment to enhance deployment configurations
+  annotations: {}
+  #  # Add init containers. e.g. to be used to give specific permissions for nexus-data.
+  #  # Add your own init container or uncomment and modify the given example.
+  initContainers:
+  #   - name: fmp-volume-permission
+  #   image: busybox
+  #   imagePullPolicy: IfNotPresent
+  #   command: ['chown','-R', '200', '/nexus-data']
+  #   volumeMounts:
+  #     - name: nexus-data
+  #       mountPath: /nexus-data
+  # Uncomment and modify this to run a command after starting the nexus container.
+  postStart:
+    command:    # '["/bin/sh", "-c", "ls"]'
+  preStart:
+    command: [/bin/sh]
+    # args:
+    #   - -c
+    #   - mkdir -p /nexus-data/keystores; cp -f "${JAVA_HOME}/jre/lib/security/cacerts"
+    #     /nexus-data/keystores/cacerts; for f in /nexus-data/secrets/cas/*; do keytool
+    #     -importcert -file "${f}" -alias "$(basename "${f}")" -keystore /nexus-data/keystores/cacerts
+    #     -storepass changeit -trustcacerts -noprompt;
+  terminationGracePeriodSeconds: 120
+  additionalContainers:
+  additionalVolumes:
+  additionalVolumeMounts:
+ingress:
+  enabled: true
+  ingressClassName: webapprouting.kubernetes.azure.com
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: '0'
+  hostPath: /
+  hostRepo: nexus.labbi.lab
+  # tls:
+  #   - secretName: nexus-tls
+  #     hosts: [registry.labbi.lab]
+service:
+  name: nexus3
+  enabled: true
+  labels: {}
+  annotations: {}
+  type: ClusterIP
+route:
+  enabled: false
+  name: docker
+  portName: docker
+  labels:
+  annotations:
+  # path: /docker
+nexusProxyRoute:
+  enabled: false
+  labels:
+  annotations:
+  # path: /nexus
+persistence:
+  enabled: true
+  accessMode: ReadWriteOnce
+  ## If defined, storageClass: <storageClass>
+  ## If set to "-", storageClass: "", which disables dynamic provisioning
+  ## If undefined (the default) or set to null, no storageClass spec is
+  ##   set, choosing the default provisioner.  (gp2 on AWS, standard on
+  ##   GKE, AWS & OpenStack)
+  ##
+  # existingClaim:
+  # annotations:
+  #  "helm.sh/resource-policy": keep
+  # storageClass: "-"
+  storageSize: 8Gi
+  # If PersistentDisk already exists you can create a PV for it by including the 2 following keypairs.
+  # pdName: nexus-data-disk
+  # fsType: ext4
+tolerations: []
+# Enable configmap and add data in configmap
+config:
+  enabled: false
+  mountPath: /sonatype-nexus-conf
+  data: []
+# # To use an additional secret, set enable to true and add data
+secret:
+  enabled: false
+  mountPath: /etc/secret-volume
+  readOnly: true
+  data: []
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ''
