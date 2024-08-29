@@ -30,41 +30,43 @@ install_nexus() {
         helm repo add sonatype https://sonatype.github.io/helm3-charts/
         helm repo update
 
-        kubectl label namespace nexus app.kubernetes.io/managed-by=Helm
-        kubectl annotate namespace nexus meta.helm.sh/release-name=nxrm
-        kubectl annotate namespace nexus meta.helm.sh/release-namespace=default
-
-        helm install nexus -n nexus .pipeline/nexus/ -f .pipeline/nexus/values.yaml \
-                --set namespaces.nexusNs.enabled=false \
-                --set namespaces.nexusNs.name=nexus \
-                --set statefulset.replicaCount=1 \
-                --set statefulset.container.resources.requests.cpu=1 \
-                --set statefulset.container.resources.requests.memory=1Gi \
-                --set statefulset.container.resources.limits.cpu=1 \
-                --set statefulset.container.resources.limits.memory=1Gi \
-                --set service.nexus.enabled=true \
-                --set service.nexus.type=ClusterIP \
-                --set ingress.enabled=true \
-                --set ingress.tls=false \
-                --set ingress.hostRepo=nexus.labbi.lab \
-                --set ingress.defaultRule=true \
-                --set ingress.ingressClassName=webapprouting.kubernetes.azure.com \
-                --set nexus.docker.enabled=true \
-                --set nexus.docker.registries[0].ingressClassName=webapprouting.kubernetes.azure.com \
-                --set nexus.docker.registries[0].host=docker.nexus.labbi.lab \
-                --set nexus.docker.registries[0].port=5000
+        helm upgrade --install nexus -n nexus sonatype/nexus-repository-manager -f n-values.yaml
+        # helm upgrade --install nexus -n nexus sonatype/nexus-repository-manager \
+        #         --set namespaces.nexusNs.enabled=false \
+        #         --set namespaces.nexusNs.name=nexus \
+        #         --set statefulset.replicaCount=1 \
+        #         --set statefulset.container.resources.requests.cpu=1 \
+        #         --set statefulset.container.resources.requests.memory=1Gi \
+        #         --set statefulset.container.resources.limits.cpu=1 \
+        #         --set statefulset.container.resources.limits.memory=1Gi \-set statefulset.container.resources.limits.memory=1Gi \
+        #         --set service.nexus.enabled=true \
+        #         --set service.nexus.type=ClusterIP \
+        #         --set secret.enabled=true \
+        #         --set secret.data=nexus-tls \
+        #         --set ingress.enabled=true \
+        #         --set ingress.defaultRule=true \
+        #         --set ingress.ingressClassName=webapprouting.kubernetes.azure.com \
+        #         --set ingress.hostRepo=nexus.labbi.lab \
+        #         --set ingress.tls=true \
+        #         --set ingress.tls.secretName=nexus-tls \
+        #         --set ingress.tls.hosts=nexus.labbi.lab,registry.labbi.lab \
+        #         --set imagePullSecrets="name: regcred" \
+        #         --set nexus.docker.enabled=true \
+        #         --set nexus.docker.registries[0].ingressClassName=webapprouting.kubernetes.azure.com \
+        #         --set nexus.docker.registries[0].host=registry.labbi.lab \
+        #         --set nexus.docker.registries[0].port=5000
 
         echo "Nexus is installed"
 }
 
 # Function to enable approuting
 enable_approuting() {
-        az aks approuting enable --resource-group $RESOURCE_GROUP --name $CLUSTER_NAME
+        az ask approuting enable --resource-group $RESOURCE_GROUP --name $CLUSTER_NAME
 }
 
 # Commit to get credentials
 get_cred() {
-        az aks get-credentials --resource-group $RESOURCE_GROUP --name $CLUSTER_NAME --overwrite-existing
+        az ask get-credentials --resource-group $RESOURCE_GROUP --name $CLUSTER_NAME --overwrite-existing
 }
 
 case $1 in
