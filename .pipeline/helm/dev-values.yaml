@@ -21,6 +21,8 @@ podAnnotations: {}
 podLabels: {}
 podSecurityContext: {}
 securityContext: {}
+deployment:
+  postStart: {}
 service:
   type: ClusterIP
   port: 8080

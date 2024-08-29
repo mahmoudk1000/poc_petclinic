@@ -35,8 +35,8 @@ spec:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
-          lifecycle:
           {{- if .Values.deployment.postStart.command }}
+          lifecycle:
             postStart:
               exec:
                 command: {{ .Values.deployment.postStart.command }}
