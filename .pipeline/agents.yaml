@@ -23,10 +23,8 @@ spec:
       args: [infinity]
   volumes:
     - name: docker-cfg
-      projected:
-        sources:
-          - secret:
-              name: regcred
-              items:
-                - key: .dockerconfigjson
-                  path: config.json
+      secret:
+        secretName: regcred
+        items:
+          - key: .dockerconfigjson
+            path: config.json

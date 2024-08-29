@@ -1,7 +1,7 @@
 library "jenkins-shared-library@stable"
 
 def appName = 'petclinic'
-def regDest = 'nexus-nexus-repository-manager-docker-5000.nexus.svc.cluster.local:5000'
+def regDest = 'registry.labbi.lab'
 def pomVersion = 'latest'
 
 pipeline {
@@ -52,7 +52,7 @@ pipeline {
                 container('helm') {
                     dir('.pipeline/helm') {
                         script {
-                            helmInstall(appName, "dev-values", "${pomVersion}_${GIT_COMMIT}", "${appName}-dev")
+                            helmInstall(appName, "dev-values", pomVersion, "${appName}-dev")
                         }
                     }
                 }
@@ -66,7 +66,7 @@ pipeline {
                 container('helm') {
                     dir('.pipeline/helm') {
                         script {
-                            helmInstall(appName, "stg-values", "${pomVersion}_${GIT_COMMIT}", "${appName}-stg")
+                            helmInstall(appName, "stg-values", pomVersion, "${appName}-stg")
                         }
                     }
                 }
@@ -80,7 +80,7 @@ pipeline {
                 container('helm') {
                     dir('.pipeline/helm') {
                         script {
-                            helmInstall(appName, "prd-values", "${pomVersion}_${GIT_COMMIT}", "${appName}-prd")
+                            helmInstall(appName, "prd-values", pomVersion, "${appName}-prd")
                         }
                     }
                 }

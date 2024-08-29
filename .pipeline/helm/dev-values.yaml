@@ -4,7 +4,7 @@
 # Declare variables to be passed into your templates.
 replicaCount: 1
 image:
-  repository: nexus-nexus-repository-manager-docker-5000.nexus.svc.cluster.local:5000/petclinic
+  repository: mahmoudk1000/petclinic
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
   tag: ''
@@ -34,6 +34,20 @@ ingress:
         - path: /
           pathType: Prefix
   tls: []
+volumeMounts:
+  - name: regcert
+    mountPath: /usr/local/share/ca-certificates/server.crt
+    readOnly: false
+    subPath: tls.crt
+  - name: regcert
+    mountPath: /usr/local/share/ca-certificates/server.key
+    readOnly: false
+    subPath: tls.key
+volumes:
+  - name: regcert
+    secret:
+      secretName: nexus-tls
+      defaultMode: 0400
 postgresql:
   enabled: true
   fullnameOverride:
