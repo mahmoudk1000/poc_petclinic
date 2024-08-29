@@ -22,8 +22,7 @@ podLabels: {}
 podSecurityContext: {}
 securityContext: {}
 deployment:
-  postStart:
-    command: [/bin/sh, -c, update-ca-certificates]
+  postStart: {}
 service:
   type: ClusterIP
   port: 8080
