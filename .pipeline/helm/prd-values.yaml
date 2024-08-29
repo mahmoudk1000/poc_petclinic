@@ -23,6 +23,7 @@ podSecurityContext: {}
 securityContext: {}
 deployment:
   postStart: {}
+    # command: [/bin/sh, -c, update-ca-certificates]
 service:
   type: ClusterIP
   port: 8080
@@ -45,6 +46,10 @@ volumeMounts:
     mountPath: /usr/local/share/ca-certificates/server.key
     readOnly: false
     subPath: tls.key
+  - name: regcert
+    mountPath: /etc/ssl/certs/server.crt
+    readOnly: false
+    subPath: tls.crt
 volumes:
   - name: regcert
     secret:
