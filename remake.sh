@@ -8,7 +8,9 @@ install_jenkins() {
         kubectl create namespace jenkins
         helm repo add jenkins https://charts.jenkins.io
         helm repo update
-        helm install jenkins jenkins/jenkins --namespace jenkins
+        helm install jenkins jenkins/jenkins --namespace jenkins \
+                --set persistence.storageClass=manual \
+                --set persistence.size=5Gi
 
         echo "Jenkins is installed"
         printf '%s' "$(kubectl get secret --namespace jenkins jenkins -o jsonpath="{.data.jenkins-admin-password}" | base64 --decode)"
@@ -19,7 +21,9 @@ install_sonarqube() {
         kubectl create namespace sonarqube
         helm repo add sonarqube https://SonarSource.github.io/helm-chart-sonarqube
         helm repo update
-        helm install sonarqube sonarqube/sonarqube --namespace sonarqube
+        helm install sonarqube sonarqube/sonarqube --namespace sonarqube \
+                --set postgresql.persistence.storageClass=manual \
+                --set postgresql.persistence.size=5Gi
 
         echo "SonarQube is installed"
 }
@@ -30,7 +34,7 @@ install_nexus() {
         helm repo add sonatype https://sonatype.github.io/helm3-charts/
         helm repo update
 
-        helm upgrade --install nexus -n nexus sonatype/nexus-repository-manager -f n-values.yaml
+        helm upgrade --install nexus -n nexus sonatype/nexus-repository-manager -f ./.pipeline/nexus_values.yaml
         # helm upgrade --install nexus -n nexus sonatype/nexus-repository-manager \
         #         --set namespaces.nexusNs.enabled=false \
         #         --set namespaces.nexusNs.name=nexus \

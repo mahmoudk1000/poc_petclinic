@@ -17,3 +17,5 @@ _site/
 !petclinic.css
 .pipeline/infra/.terraform/
 .pipeline/infra/terraform.tfstate*
+.pipeline/self-managed/.terraform/
+.pipeline/self-managed/terraform.tfstate*

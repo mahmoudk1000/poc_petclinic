@@ -4,6 +4,12 @@ variable "kube_version" {
   default     = "1.30"
 }
 
+variable "auto_scaling_enabled" {
+  description = "Enable auto scaling"
+  type        = bool
+  default     = true
+}
+
 variable "agent_count" {
   description = "Node Count"
   type        = number

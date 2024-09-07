@@ -40,7 +40,7 @@ module "aks" {
 
   kubernetes_version = var.kube_version
 
-  enable_auto_scaling = true
+  enable_auto_scaling = var.auto_scaling_enabled
   agents_count        = var.agent_count
   agents_min_count    = var.agents_min_count
   agents_max_count    = var.agents_max_count
