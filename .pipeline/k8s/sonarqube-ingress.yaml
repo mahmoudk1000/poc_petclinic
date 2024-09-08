@@ -18,10 +18,10 @@ spec:
     - host: sonar.labbi.lab
       http:
         paths:
-          - backend:
-            service:
-              name: sonarqube-sonarqube
-              port:
-                number: 9000
-            path: /
+          - path: /
             pathType: Prefix
+            backend:
+              service:
+                name: sonarqube-sonarqube
+                port:
+                  number: 9000
