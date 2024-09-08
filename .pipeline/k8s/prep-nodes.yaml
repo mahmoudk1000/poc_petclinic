@@ -29,37 +29,39 @@ data:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: setup-script
+  name: scripts
   namespace: kube-system
 data:
-  setup.sh: |
+  cert_install.sh: |
     echo "$TRUSTED_CERT" > /usr/local/share/ca-certificates/cert.crt &&
     echo "$TRUSTED_CERT" > /etc/ssl/certs/cert.crt &&
     update-ca-certificates &&
     systemctl restart containerd
+  hosts.sh: |
+    echo "10.244.1.6 registry.labbi.lab" >> /etc/hosts
 ---
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
   namespace: kube-system
-  name: node-custom-setup
+  name: nodes-injector
   labels:
-    k8s-app: node-custom-setup
+    k8s-app: nodes-injector
 spec:
   selector:
     matchLabels:
-      k8s-app: node-custom-setup
+      k8s-app: nodes-injector
   template:
     metadata:
       labels:
-        k8s-app: node-custom-setup
+        k8s-app: nodes-injector
     spec:
       hostPID: true
       hostNetwork: true
       initContainers:
-        - name: init-node
+        - name: cert-node
           command: [nsenter]
-          args: [--mount=/proc/1/ns/mnt, --, sh, -c, $(SETUP_SCRIPT)]
+          args: [--mount=/proc/1/ns/mnt, --, sh, -c, $(CERT_SCRIPT)]
           image: debian
           env:
             - name: TRUSTED_CERT
@@ -67,11 +69,21 @@ spec:
                 configMapKeyRef:
                   name: trusted-ca
                   key: cert.crt
-            - name: SETUP_SCRIPT
+            - name: CERT_SCRIPT
               valueFrom:
                 configMapKeyRef:
-                  name: setup-script
-                  key: setup.sh
+                  name: scripts
+                  key: cert_install.sh
+        - name: host-node
+          command: [nsenter]
+          args: [--mount=/proc/1/ns/mnt, --, sh, -c, $(HOSTS_SCRIPT)]
+          image: debian
+          env:
+            - name: HOSTS_SCRIPT
+              valueFrom:
+                configMapKeyRef:
+                  name: scripts
+                  key: hosts.sh
           securityContext:
             privileged: true
       containers:
