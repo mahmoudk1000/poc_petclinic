@@ -20,7 +20,7 @@ nexus:
     registries:
       - host: registry.labbi.lab
         port: 5000
-        secretName: nexus-tls
+        secretName: wild-tls
   env:
     - name: INSTALL4J_ADD_VM_PARAMS
       value: |-
