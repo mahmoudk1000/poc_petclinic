@@ -4,7 +4,7 @@
 # Declare variables to be passed into your templates.
 replicaCount: 1
 image:
-  repository: nexus-nexus-repository-manager-docker-5000.nexus.svc.cluster.local:5000/petclinic
+  repository: registry.labbi.lab:30443/petclinic
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
   tag: ''
@@ -21,19 +21,28 @@ podAnnotations: {}
 podLabels: {}
 podSecurityContext: {}
 securityContext: {}
+deployment:
+  postStart: {}
+    # command: [/bin/sh, -c, update-ca-certificates]
 service:
   type: ClusterIP
   port: 8080
 ingress:
   enabled: true
-  className: webapprouting.kubernetes.azure.com
-  annotations: {}
+  className: nginx
+  annotations:
+    nginx.ingress.kubernetes.io/enable-directory-listing: 'false'
+    nginx.ingress.kubernetes.io/limit-connections: '20'
+    nginx.ingress.kubernetes.io/limit-rps: '5'
+    nginx.ingress.kubernetes.io/server-snippet: |
+      if ($scheme !~* ^(http|https)$) { return 444; }
   hosts:
     - host: labbi.lab
       paths:
         - path: /
           pathType: Prefix
   tls: []
+volumeMounts: {}
 postgresql:
   enabled: true
   fullnameOverride:

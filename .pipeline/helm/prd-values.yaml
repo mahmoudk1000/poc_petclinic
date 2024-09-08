@@ -4,7 +4,7 @@
 # Declare variables to be passed into your templates.
 replicaCount: 2
 image:
-  repository: registry.labbi.lab:5000/petclinic
+  repository: registry.labbi.lab:30443/petclinic
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
   tag: ''
@@ -42,24 +42,7 @@ ingress:
         - path: /
           pathType: Prefix
   tls: []
-# volumeMounts:
-#   - name: regcert
-#     mountPath: /usr/local/share/ca-certificates/server.crt
-#     readOnly: false
-#     subPath: tls.crt
-#   - name: regcert
-#     mountPath: /usr/local/share/ca-certificates/server.key
-#     readOnly: false
-#     subPath: tls.key
-#   - name: regcert
-#     mountPath: /etc/ssl/certs/server.crt
-#     readOnly: false
-#     subPath: tls.crt
-# volumes:
-#   - name: regcert
-#     secret:
-#       secretName: nexus-tls
-#       defaultMode: 0400
+volumeMounts: {}
 postgresql:
   enabled: true
   fullnameOverride:

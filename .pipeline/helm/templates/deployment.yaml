@@ -29,16 +29,6 @@ spec:
       serviceAccountName: {{ include "petclinic.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
-      # initContainers:
-      #   - name: init-hosts
-      #     image: busybox
-      #     command: ["/bin/sh", "-c", "echo '4.175.52.131 registry.labbi.lab' >> /etc/hosts"]
-      #     volumeMounts:
-      #     - name: hostfile
-      #       mountPath: /etc/hosts
-      #   - name: init-mydb
-      #     image: alpine
-      #     command: ['sh', '-c', 'until nslookup petclinic-postgresql.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local; do echo waiting for mydb; sleep 2; done;']
       containers:
         - name: {{ .Chart.Name }}
           securityContext:
@@ -76,9 +66,6 @@ spec:
           {{- end }}
       {{- with .Values.volumes }}
       volumes:
-        - name: hostfile
-          hostPath:
-            path: /etc/hosts
         {{- toYaml . | nindent 8 }}
       {{- end }}
       {{- with .Values.nodeSelector }}
