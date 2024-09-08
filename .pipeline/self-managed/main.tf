@@ -161,7 +161,7 @@ resource "azurerm_network_security_group" "nsg" {
     protocol                   = "Tcp"
     source_port_range          = "*"
     destination_port_range     = "30080"
-    source_address_prefixes    = var.white_list_ips
+    source_address_prefixes    = concat(var.white_list_ips, azurerm_public_ip.public_ip[*].ip_address)
     destination_address_prefix = "*"
   }
 
@@ -173,7 +173,7 @@ resource "azurerm_network_security_group" "nsg" {
     protocol                   = "Tcp"
     source_port_range          = "*"
     destination_port_range     = "30443"
-    source_address_prefixes    = var.white_list_ips
+    source_address_prefixes    = concat(var.white_list_ips, azurerm_public_ip.public_ip[*].ip_address)
     destination_address_prefix = "*"
   }
 
