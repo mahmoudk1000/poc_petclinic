@@ -5,16 +5,23 @@ kind: Ingress
 metadata:
   name: sonarqube-ingress
   namespace: sonarqube
+  annotations:
+    # nginx.ingress.kubernetes.io/ssl-redirect: 'true'
+    nginx.ingress.kubernetes.io/enable-directory-listing: 'false'
+    nginx.ingress.kubernetes.io/limit-connections: '20'
+    nginx.ingress.kubernetes.io/limit-rps: '5'
+    nginx.ingress.kubernetes.io/server-snippet: |
+      if ($scheme !~* ^(http|https)$) { return 444; }
 spec:
-  ingressClassName: webapprouting.kubernetes.azure.com
+  ingressClassName: nginx
   rules:
     - host: sonar.labbi.lab
       http:
         paths:
           - backend:
-              service:
-                name: sonarqube-sonarqube
-                port:
-                  number: 9000
+            service:
+              name: sonarqube-sonarqube
+              port:
+                number: 9000
             path: /
             pathType: Prefix

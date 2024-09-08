@@ -42,7 +42,7 @@ nexus:
   resources:
     requests:
       cpu: 250m
-      memory: 2Gi
+      memory: 1Gi
     limits:
       cpu: 1
       memory: 3Gi
@@ -111,6 +111,11 @@ ingress:
   ingressClassName: nginx
   annotations:
     nginx.ingress.kubernetes.io/proxy-body-size: '0'
+    nginx.ingress.kubernetes.io/enable-directory-listing: 'false'
+    nginx.ingress.kubernetes.io/limit-connections: '20'
+    nginx.ingress.kubernetes.io/limit-rps: '5'
+    nginx.ingress.kubernetes.io/server-snippet: |
+      if ($scheme !~* ^(http|https)$) { return 444; }
   hostPath: /
   hostRepo: nexus.labbi.lab
   # tls:

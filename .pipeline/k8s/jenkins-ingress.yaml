@@ -5,16 +5,23 @@ kind: Ingress
 metadata:
   name: jenkins-ingress
   namespace: jenkins
+  annotations:
+    # nginx.ingress.kubernetes.io/ssl-redirect: 'true'
+    nginx.ingress.kubernetes.io/enable-directory-listing: 'false'
+    nginx.ingress.kubernetes.io/limit-connections: '20'
+    nginx.ingress.kubernetes.io/limit-rps: '5'
+    nginx.ingress.kubernetes.io/server-snippet: |
+      if ($scheme !~* ^(http|https)$) { return 444; }
 spec:
-  ingressClassName: webapprouting.kubernetes.azure.com
+  ingressClassName: nginx
   rules:
     - host: jenkins.labbi.lab
       http:
         paths:
           - backend:
-              service:
-                name: jenkins
-                port:
-                  number: 8080
+            service:
+              name: jenkins
+              port:
+                number: 8080
             path: /
             pathType: Prefix
