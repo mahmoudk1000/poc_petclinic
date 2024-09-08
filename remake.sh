@@ -34,7 +34,7 @@ install_nexus() {
         helm repo add sonatype https://sonatype.github.io/helm3-charts/
         helm repo update
 
-        helm upgrade --install nexus -n nexus sonatype/nexus-repository-manager -f ./.pipeline/nexus_values.yaml
+        helm upgrade --install nexus -n nexus sonatype/nexus-repository-manager -f ./.pipeline/k8s/nexus_values.yaml
         # helm upgrade --install nexus -n nexus sonatype/nexus-repository-manager \
         #         --set namespaces.nexusNs.enabled=false \
         #         --set namespaces.nexusNs.name=nexus \
