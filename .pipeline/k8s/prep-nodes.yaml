@@ -38,7 +38,7 @@ data:
     update-ca-certificates &&
     systemctl restart containerd
   hosts.sh: |
-    echo "10.244.1.6 registry.labbi.lab" >> /etc/hosts
+    echo "52.166.234.158 registry.labbi.lab" >> /etc/hosts
 ---
 apiVersion: apps/v1
 kind: DaemonSet
