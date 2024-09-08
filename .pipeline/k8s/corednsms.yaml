@@ -5,8 +5,14 @@ metadata:
   name: coredns-custom
   namespace: kube-system
 data:
-  test.override: |-
+  custom.server: |-
+    registry.labbi.lab:53 {
+      errors
+      cache 30
+      forward . nexus-nexus-repository-manager-docker-5000.nexus.svc.cluster.local:5000
+    }
+  nodes-resolver.override: |-
     hosts {
-      4.175.52.131 registry.labbi.lab
+      10.103.84.194 registry.labbi.lab
       fallthrough
     }
