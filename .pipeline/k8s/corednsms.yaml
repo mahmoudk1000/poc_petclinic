@@ -26,8 +26,5 @@ data:
         reload
         loadbalance
     }
-    registry.labbi.lab:53 {
-      errors
-      cache 30
-      forward . nexus-nexus-repository-manager-docker-5000.nexus.svc.cluster.local
-    }
+  customdomains.db: |-
+    10.244.1.6 registry.labbi.lab
