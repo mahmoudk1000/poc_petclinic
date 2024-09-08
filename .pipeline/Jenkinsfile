@@ -1,7 +1,7 @@
 library "jenkins-shared-library@stable"
 
 def appName = 'petclinic'
-def regDest = 'registry.labbi.lab'
+def regDest = 'registry.labbi.lab:5000'
 def pomVersion = 'latest'
 
 pipeline {

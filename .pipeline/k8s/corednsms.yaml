@@ -11,6 +11,10 @@ data:
         health {
            lameduck 5s
         }
+        hosts {
+          10.103.84.194 registry.labbi.lab
+          fallthrough
+        }
         ready
         kubernetes cluster.local in-addr.arpa ip6.arpa {
            pods insecure
@@ -26,5 +30,3 @@ data:
         reload
         loadbalance
     }
-  customdomains.db: |-
-    10.244.1.6 registry.labbi.lab
