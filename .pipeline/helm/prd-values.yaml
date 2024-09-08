@@ -29,32 +29,37 @@ service:
   port: 8080
 ingress:
   enabled: true
-  className: webapprouting.kubernetes.azure.com
-  annotations: {}
+  className: nginx
+  annotations:
+    nginx.ingress.kubernetes.io/enable-directory-listing: 'false'
+    nginx.ingress.kubernetes.io/limit-connections: '20'
+    nginx.ingress.kubernetes.io/limit-rps: '5'
+    nginx.ingress.kubernetes.io/server-snippet: |
+      if ($scheme !~* ^(http|https)$) { return 444; }
   hosts:
     - host: labbi.lab
       paths:
         - path: /
           pathType: Prefix
   tls: []
-volumeMounts:
-  - name: regcert
-    mountPath: /usr/local/share/ca-certificates/server.crt
-    readOnly: false
-    subPath: tls.crt
-  - name: regcert
-    mountPath: /usr/local/share/ca-certificates/server.key
-    readOnly: false
-    subPath: tls.key
-  - name: regcert
-    mountPath: /etc/ssl/certs/server.crt
-    readOnly: false
-    subPath: tls.crt
-volumes:
-  - name: regcert
-    secret:
-      secretName: nexus-tls
-      defaultMode: 0400
+# volumeMounts:
+#   - name: regcert
+#     mountPath: /usr/local/share/ca-certificates/server.crt
+#     readOnly: false
+#     subPath: tls.crt
+#   - name: regcert
+#     mountPath: /usr/local/share/ca-certificates/server.key
+#     readOnly: false
+#     subPath: tls.key
+#   - name: regcert
+#     mountPath: /etc/ssl/certs/server.crt
+#     readOnly: false
+#     subPath: tls.crt
+# volumes:
+#   - name: regcert
+#     secret:
+#       secretName: nexus-tls
+#       defaultMode: 0400
 postgresql:
   enabled: true
   fullnameOverride:
