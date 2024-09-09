@@ -27,6 +27,13 @@ pipeline {
             }
         }
         stage('Build Artifact') {
+            when {
+                anyOf {
+                    branch 'main'
+                    brnach 'release'
+                    branch 'dev'
+                }
+            }
             steps {
                 container('maven') {
                     script {
@@ -38,6 +45,13 @@ pipeline {
             }
         }
         stage('Building Image Using Kaniko') {
+            when {
+                anyOf {
+                    branch 'main'
+                    brnach 'release'
+                    branch 'dev'
+                }
+            }
             steps {
                 container (name: 'kaniko', shell: '/busybox/sh') {
                     script {
