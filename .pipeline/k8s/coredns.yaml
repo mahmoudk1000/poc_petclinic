@@ -12,7 +12,7 @@ data:
            lameduck 5s
         }
         hosts {
-          10.103.84.194 registry.labbi.lab
+          51.144.158.233 registry.labbi.lab
           fallthrough
         }
         ready

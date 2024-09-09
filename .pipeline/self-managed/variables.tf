@@ -31,5 +31,5 @@ variable "admin_password" {
 variable "white_list_ips" {
   description = "Whitelist IPs"
   type        = list(string)
-  default     = ["197.48.152.52"]
+  default     = ["196.159.194.79"]
 }
