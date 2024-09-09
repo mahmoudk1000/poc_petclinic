@@ -19,3 +19,4 @@ _site/
 .pipeline/infra/terraform.tfstate*
 .pipeline/self-managed/.terraform/
 .pipeline/self-managed/terraform.tfstate*
+.pipeline/self-managed/.terraform.tfstate.lock.info
