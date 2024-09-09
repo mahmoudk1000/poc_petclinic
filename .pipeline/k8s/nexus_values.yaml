@@ -42,7 +42,7 @@ nexus:
   resources:
     requests:
       cpu: 250m
-      memory: 1Gi
+      memory: 2Gi
     limits:
       cpu: 1
       memory: 3Gi
