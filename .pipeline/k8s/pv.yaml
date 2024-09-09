@@ -2,6 +2,66 @@
 apiVersion: v1
 kind: PersistentVolume
 metadata:
+  name: petclinic-prd
+spec:
+  capacity:
+    storage: 5Gi
+  accessModes: [ReadWriteOnce]
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: manual
+  local:
+    path: /mnt/data/prd
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values: [wm-0]
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: petclinic-tst
+spec:
+  capacity:
+    storage: 2Gi
+  accessModes: [ReadWriteOnce]
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: manual
+  local:
+    path: /mnt/data/tst
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values: [wm-0]
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: petclinic-dev
+spec:
+  capacity:
+    storage: 2Gi
+  accessModes: [ReadWriteOnce]
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: manual
+  local:
+    path: /mnt/data/dev
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values: [wm-0]
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
   name: jenkins-pv
 spec:
   capacity:
