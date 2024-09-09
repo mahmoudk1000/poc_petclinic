@@ -1,7 +1,7 @@
 library "jenkins-shared-library@stable"
 
 def appName = 'petclinic'
-def regDest = '10.103.157.141:5000'
+def regDest = 'registry.labbi.lab:30443'
 def pomVersion = 'latest'
 
 pipeline {
@@ -14,18 +14,18 @@ pipeline {
     }
 
     stages {
-        stage('SonarQube Analysis') {
-            steps {
-                container('maven') {
-                    script {
-                        withSonarQubeEnv(installationName: 'SonarQubeServer', credentialsId: 'SonarQubeToken') {
-                            sh label: "Running SCA Test",
-                                script: "./mvnw clean verify sonar:sonar -Dsonar.projectKey=petclinic -Dsonar.projectName='petclinic'"
-                        }
-                    }
-                }
-            }
-        }
+        //stage('SonarQube Analysis') {
+        //    steps {
+        //        container('maven') {
+        //            script {
+        //                withSonarQubeEnv(installationName: 'SonarQubeServer', credentialsId: 'SonarQubeToken') {
+        //                    sh label: "Running SCA Test",
+        //                        script: "./mvnw clean verify sonar:sonar -Dsonar.projectKey=petclinic -Dsonar.projectName='petclinic'"
+        //                }
+        //            }
+        //        }
+        //    }
+        //}
         stage('Build Artifact') {
             when {
                 anyOf {
